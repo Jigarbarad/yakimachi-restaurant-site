@@ -1,0 +1,9 @@
+node_modules
+.env
+*.db
+*.db-shm
+*.db-wal
+dist
+.DS_Store
+.qodo
+client/public/private/

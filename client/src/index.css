@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+/* Theme taken from the restaurant interior: cream walls, honey oak, red paper lanterns.
+   These become classes like bg-paper, text-ink, bg-lantern, border-oak. */
+@theme {
+  --color-paper: #f7f0e3;      /* warm cream wall */
+  --color-paper-deep: #efe4cf; /* slightly darker band for sections */
+  --color-ink: #1f1a17;        /* near-black text (placemats, chopsticks) */
+  --color-oak: #d9a85f;        /* honey wood */
+  --color-oak-dark: #a8703a;
+  --color-lantern: #d3292b;    /* red paper lanterns, our main accent */
+  --color-leaf: #3f6b45;       /* the plant: vegetarian badges */
+  --font-display: "Shippori Mincho", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
