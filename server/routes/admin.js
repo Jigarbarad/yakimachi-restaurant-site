@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../db');
 const requireAdmin = require('../middleware/auth');
+const { sendBookingEmail } = require('../mailer');
 
 const router = express.Router();
 
@@ -62,9 +63,13 @@ router.patch('/reservations/:id', (req, res) => {
   if (!['pending', 'confirmed', 'cancelled'].includes(status)) {
     return res.status(400).json({ error: 'Status must be pending, confirmed or cancelled.' });
   }
-  const r = db.prepare('UPDATE reservations SET status = ? WHERE id = ?').run(status, req.params.id);
-  if (r.changes === 0) return res.status(404).json({ error: 'Reservation not found.' });
-  res.json(db.prepare('SELECT * FROM reservations WHERE id = ?').get(req.params.id));
+  const before = db.prepare('SELECT status FROM reservations WHERE id = ?').get(req.params.id);
+  if (!before) return res.status(404).json({ error: 'Reservation not found.' });
+  db.prepare('UPDATE reservations SET status = ? WHERE id = ?').run(status, req.params.id);
+  const updated = db.prepare('SELECT * FROM reservations WHERE id = ?').get(req.params.id);
+  // Email the customer only when the status really changed (not on repeated clicks).
+  if (before.status !== status) sendBookingEmail(updated, status);
+  res.json(updated);
 });
 
 // ---------- menu ----------
