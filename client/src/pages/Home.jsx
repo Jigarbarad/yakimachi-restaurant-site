@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import ContactDetails from '../components/ContactDetails'
 import DishArt from '../components/DishArt'
+import MapEmbed from '../components/MapEmbed'
 import { restaurant } from '../config/restaurant'
 
 const formatPrice = (pence) => (pence == null ? 'Ask staff' : `£${(pence / 100).toFixed(2)}`)
-const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-  `${restaurant.name} ${restaurant.address}`
-)}`
 
 function Hero() {
   return (
@@ -125,27 +124,15 @@ function Reviews() {
 
 function VisitUs() {
   return (
-    <section className="mx-auto max-w-6xl px-4 py-16 text-center">
-      <h2 className="font-display text-3xl font-bold">Visit us</h2>
-      <p className="mt-6 text-ink/80">{restaurant.address}</p>
-      <p className="mt-1 text-ink/80">
-        <a href={`tel:${restaurant.phone.replace(/\s/g, '')}`} className="hover:text-lantern">
-          {restaurant.phone}
-        </a>
-      </p>
-      {restaurant.hours.map((h) => (
-        <p key={h.days} className="mt-1 text-ink/60">
-          {h.days}: {h.time}
-        </p>
-      ))}
-      <a
-        href={mapsUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-8 inline-block rounded-full border border-lantern px-8 py-3 font-medium text-lantern hover:bg-lantern hover:text-paper"
-      >
-        Get directions
-      </a>
+    <section className="mx-auto max-w-6xl px-4 py-16">
+      <h2 className="text-center font-display text-3xl font-bold">Visit us</h2>
+      {/* Details on the left, map beside them (stacked on phones). */}
+      <div className="mt-10 grid items-center gap-8 lg:grid-cols-5">
+        <div className="lg:col-span-2">
+          <ContactDetails />
+        </div>
+        <MapEmbed className="h-80 lg:col-span-3" />
+      </div>
     </section>
   )
 }
