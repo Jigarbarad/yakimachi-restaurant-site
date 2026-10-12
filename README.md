@@ -6,6 +6,8 @@ A full-stack concept website for a Japanese restaurant: customers browse the men
 
 ![Home page](docs/screenshots/home-hero.png)
 
+> **Full documentation is in [`docs/`](docs/README.md):** getting started, architecture, API reference, configuration, booking rules, admin guide, email setup, security notes and roadmap.
+
 ## Features
 
 **Customer site**
@@ -16,7 +18,7 @@ A full-stack concept website for a Japanese restaurant: customers browse the men
 
 **Owner dashboard (`/admin`)**
 - Login with a signed token (JWT) and a lockout after repeated wrong passwords
-- Reservations: filter by status, confirm, cancel (with a confirm prompt) or restore bookings
+- Reservations: filter by status, confirm, cancel (with a confirm prompt) or restore bookings. Customers who left an email get a confirmation or cancellation email automatically
 - Menu editor: change names, prices and descriptions, mark dishes sold out (hidden from the public menu), add new dishes, and attach real photos
 
 | Menu | Reserve |
@@ -35,6 +37,7 @@ A full-stack concept website for a Japanese restaurant: customers browse the men
 | Backend | Node.js, Express |
 | Database | SQLite via `better-sqlite3` (a single file, no database server) |
 | Auth | `bcryptjs` password hashing, `jsonwebtoken` |
+| Email | `nodemailer` over any SMTP account |
 
 ## How it fits together
 
@@ -98,6 +101,8 @@ ADMIN_USERNAME=admin
 ADMIN_PASSWORD_HASH='<the bcrypt hash>'
 ```
 
+**Optional: booking emails.** Add an SMTP account to `.env` (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, optional `MAIL_FROM`; see `.env.example`). With Gmail, use an [App Password](https://myaccount.google.com/apppasswords), not your normal password. Without these set, the server just logs the email it would have sent. A mail failure never blocks the admin action.
+
 > Port 5000 is avoided on purpose: on macOS it is used by AirPlay Receiver and silently answers with a 403.
 
 **Optional hero photo:** the home page shows a photo from `client/public/private/interior.jpg` if that file exists (the folder is git-ignored). Without it, the hero uses a gradient background.
@@ -114,7 +119,7 @@ ADMIN_PASSWORD_HASH='<the bcrypt hash>'
 
 ## Known limitations / next steps
 
-- Bookings are created as **pending** and nothing is emailed or texted. The owner has to check the dashboard, and the customer has to wait for a call.
+- Bookings are created as **pending**. Customers are emailed only once the owner confirms or cancels (and only if they gave an email). There is no "request received" email and no SMS, and the owner has to check the dashboard for new bookings.
 - No rate limiting or CAPTCHA on the public booking form (the admin login does have a lockout).
 - Single admin account configured through environment variables. A real product would store users in the database.
 - No automated tests yet. The API was checked by hand with real requests, including bad input, capacity limits and the lockout.
